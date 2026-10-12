@@ -1,0 +1,15 @@
+---
+import VideoEmbed from "./VideoEmbed.astro";
+
+interface Props {
+  id: string;
+  title: string;
+  type?: "video" | "playlist";
+  isShort?: boolean;
+  poster?: string;
+}
+
+const { id, title, type = "video", isShort = false, poster } = Astro.props;
+---
+
+<VideoEmbed id={id} title={title} type={type} isShort={isShort} poster={poster} />

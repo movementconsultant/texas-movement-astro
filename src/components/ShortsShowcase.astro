@@ -1,0 +1,17 @@
+---
+import ShortsGrid from "./ShortsGrid.astro";
+
+interface Props {
+  shorts: { id: string; title: string }[];
+  heading?: string;
+  note?: string;
+}
+
+const {
+  shorts,
+  heading = "Shorts",
+  note = "Thirty seconds at a time.",
+} = Astro.props;
+---
+
+<ShortsGrid shorts={shorts} heading={heading} note={note} />

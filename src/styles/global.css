@@ -19,6 +19,13 @@
   --blue: #1e3a8a;
   --line: var(--ink);
 
+  /* Semantic aliases (used by the performance page) */
+  --color-surface: var(--surface);
+  --color-text: var(--ink);
+  --color-text-muted: var(--ink-soft);
+  --color-border: color-mix(in srgb, var(--ink) 25%, transparent);
+  --accent: #059669;
+
   /* Type */
   --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
   --font-body: "Source Serif 4", Georgia, "Times New Roman", serif;
@@ -125,7 +132,8 @@ strong {
 
 /* ---------- Utilities ---------- */
 
-.wrap {
+.wrap,
+.container {
   width: 100%;
   max-width: var(--wrap);
   margin-inline: auto;
