@@ -1,0 +1,125 @@
+// src/pages/media.astro
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import YouTubeEmbed from '../components/YouTubeEmbed.astro';
+
+const platforms = [
+  {
+    title: 'YouTube',
+    description: 'Long-form content, founder vlogs, and behind-the-scenes documentaries. Deep dives into the journey of building Texas Movement.',
+    href: 'https://www.youtube.com/@TexasMovementMedia', // Update with your actual YT handle URL if different
+  },
+  {
+    title: 'Instagram',
+    description: 'Visual storytelling, brand highlights, and daily updates. Follow the aesthetic and the hustle.',
+    href: 'https://www.instagram.com/alexandervmathai/',
+  },
+  {
+    title: 'TikTok',
+    description: 'Short-form content, trends, and raw moments. Quick hits of inspiration and entertainment.',
+    href: 'https://www.tiktok.com/@AlexanderVMathai',
+  },
+];
+
+// REPLACE THESE WITH THE ACTUAL URLS OF THE SPECIFIC POSTS/VIDEOS YOU WANT TO FEATURE
+const featuredTikTok = 'https://www.tiktok.com/@AlexanderVMathai/video/7000000000000000000'; 
+const featuredInstagram = 'https://www.instagram.com/p/C0000000000/'; 
+---
+
+<BaseLayout title="Media" description="Texas Movement Media — YouTube, Instagram, and TikTok productions documenting the journey.">
+  <section class="page-hero" style="--accent: #7c3aed">
+    <div class="container">
+      <p class="eyebrow">Texas Movement Media</p>
+      <h1>Content That<br />Moves People</h1>
+      <p class="sub">
+        YouTube, Instagram, and TikTok productions. Founder vlogs, brand stories, 
+        and behind-the-scenes content documenting the journey.
+      </p>
+    </div>
+  </section>
+
+  <section class="platforms">
+    <div class="container">
+      <h2>Where to Follow</h2>
+      <div class="platform-grid">
+        {platforms.map(p => (
+          <div class="platform-card">
+            <h3>{p.title}</h3>
+            <p>{p.description}</p>
+            <a href={p.href} target="_blank" rel="noopener noreferrer" class="platform-link">Follow on {p.title} &rarr;</a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="container" style="padding: 2rem 1.5rem 0;">
+    <h2 style="text-align: center; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 700;">Shades of AI Series</h2>
+    <YouTubeEmbed 
+      type="playlist" 
+      id="PLfuA6emw6UmxLB43itgFOb0JnXdUwBAHV" 
+      title="Texas Movement Media: Shades of AI" 
+    />
+  </section>
+
+  <section class="featured-social">
+    <div class="container">
+      <h2>Featured Clips</h2>
+      <div class="social-embed-grid">
+        
+        <!-- TikTok Embed -->
+        <div class="embed-wrapper">
+          <h3>Latest on TikTok</h3>
+          <blockquote class="tiktok-embed" cite={featuredTikTok} data-video-id={featuredTikTok.split('/video/')[1]} style="max-width: 605px; min-width: 325px;">
+            <section>
+              <a target="_blank" href="https://www.tiktok.com/@AlexanderVMathai">@AlexanderVMathai</a>
+            </section>
+          </blockquote>
+        </div>
+
+        <!-- Instagram Embed -->
+        <div class="embed-wrapper">
+          <h3>Latest on Instagram</h3>
+          <blockquote class="instagram-media" data-instgrm-permalink={featuredInstagram} data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
+          </blockquote>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <h2>Join the Movement</h2>
+      <p>Subscribe and follow for daily content and exclusive behind-the-scenes access.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 5rem 0 3rem; text-align: center; border-bottom: 2px solid var(--accent); }
+  .eyebrow { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 1rem; }
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.15; margin-bottom: 1.25rem; }
+  .sub { max-width: 600px; margin: 0 auto; font-size: 1.1rem; color: var(--color-text-muted); line-height: 1.7; }
+  
+  .platforms { padding: 4rem 0; }
+  .platforms h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 2.5rem; text-align: center; }
+  .platform-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem; }
+  .platform-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 2rem; transition: border-color 0.2s ease; }
+  .platform-card:hover { border-color: var(--accent); }
+  .platform-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--accent); }
+  .platform-card p { color: var(--color-text-muted); line-height: 1.6; font-size: 0.95rem; margin-bottom: 1.25rem; }
+  .platform-link { color: var(--accent); font-weight: 600; text-decoration: none; transition: color 0.2s ease; }
+  .platform-link:hover { color: #a78bfa; }
+
+  .featured-social { padding: 4rem 0; }
+  .featured-social h2 { text-align: center; font-size: 1.75rem; font-weight: 700; margin-bottom: 2.5rem; }
+  .social-embed-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; justify-items: center; }
+  .embed-wrapper { width: 100%; max-width: 540px; text-align: center; }
+  .embed-wrapper h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--color-text-muted); }
+
+  .cta { padding: 5rem 0; text-align: center; background: var(--color-surface); margin-top: 2rem; display: flex; flex-direction: column; align-items: center; }
+  .cta .container { display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .cta h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.75rem; }
+  .cta p { color: var(--color-text-muted); font-size: 1.05rem; }
+</style>
