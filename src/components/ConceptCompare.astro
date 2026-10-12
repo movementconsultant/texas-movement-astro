@@ -1,0 +1,186 @@
+---
+interface Option {
+  name: string;
+  tagline: string;
+  features: string[];
+  idealFor: string;
+  cta?: { label: string; href: string };
+  featured?: boolean;
+}
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  options: Option[];
+}
+
+const {
+  heading = "Two ways to start",
+  intro = "Same standard of work. Different scope.",
+  options,
+} = Astro.props;
+---
+
+<div class="compare">
+  <div class="compare__head">
+    <h3 class="compare__title">{heading}</h3>
+    <p class="compare__intro">{intro}</p>
+  </div>
+
+  <div class="compare__grid" data-count={options.length}>
+    {options.map((option) => (
+      <article class:list={["compare__col", { "is-featured": option.featured }]}>
+        {option.featured && <span class="compare__flag">Most complete</span>}
+        <h4>{option.name}</h4>
+        <p class="compare__tagline">{option.tagline}</p>
+        <ul class="compare__features">
+          {option.features.map((feature) => <li>{feature}</li>)}
+        </ul>
+        <p class="compare__ideal">
+          <span>Best for</span>
+          {option.idealFor}
+        </p>
+        {option.cta && (
+          <a class="btn btn--ghost compare__cta" href={option.cta.href}>
+            {option.cta.label}
+          </a>
+        )}
+      </article>
+    ))}
+  </div>
+</div>
+
+<style>
+  .compare {
+    border: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .compare__head {
+    padding: 1.2rem clamp(1.2rem, 3vw, 2rem);
+    border-bottom: var(--border);
+    background: var(--paper);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .compare__title {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .compare__intro {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .compare__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  }
+
+  .compare__col {
+    padding: clamp(1.2rem, 3vw, 2rem);
+    border-right: var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    position: relative;
+  }
+
+  .compare__col:last-child {
+    border-right: 0;
+  }
+
+  .compare__col.is-featured {
+    background: color-mix(in srgb, var(--amber) 12%, var(--surface));
+  }
+
+  .compare__flag {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 700;
+    background: var(--amber);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    padding: 0.2rem 0.45rem;
+  }
+
+  .compare__col h4 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .compare__tagline {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .compare__features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .compare__features li {
+    position: relative;
+    padding-left: 1.35rem;
+    font-size: 0.93rem;
+  }
+
+  .compare__features li::before {
+    content: "\2713";
+    position: absolute;
+    left: 0;
+    top: -0.05em;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .compare__ideal {
+    margin: auto 0 0;
+    padding-top: 0.8rem;
+    border-top: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+
+  .compare__ideal span {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber-deep);
+    margin-bottom: 0.2rem;
+  }
+
+  .compare__cta {
+    align-self: flex-start;
+  }
+
+  @media (max-width: 700px) {
+    .compare__col {
+      border-right: 0;
+      border-bottom: var(--border);
+    }
+    .compare__col:last-child {
+      border-bottom: 0;
+    }
+  }
+</style>

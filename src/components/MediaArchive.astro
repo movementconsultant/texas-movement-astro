@@ -1,0 +1,142 @@
+---
+import VideoEmbed from "./VideoEmbed.astro";
+
+interface MediaItem {
+  id: string;
+  title: string;
+  category: string;
+  type?: "video" | "playlist";
+}
+
+interface Props {
+  items: MediaItem[];
+  categories?: string[];
+}
+
+const { items } = Astro.props;
+
+const categories = [
+  "All",
+  ...Array.from(new Set(items.map((item) => item.category))),
+];
+---
+
+<div class="media-archive" data-media-archive>
+  <div class="media-archive__filters" role="group" aria-label="Filter media by category">
+    {categories.map((category, index) => (
+      <button
+        type="button"
+        class:list={["filter", { "is-active": index === 0 }]}
+        data-filter={category}
+        aria-pressed={index === 0 ? "true" : "false"}
+      >
+        {category}
+      </button>
+    ))}
+  </div>
+
+  <p class="media-archive__count" data-media-count aria-live="polite">
+    {items.length} pieces
+  </p>
+
+  <div class="media-grid">
+    {items.map((item) => (
+      <div class="media-item" data-category={item.category}>
+        <VideoEmbed id={item.id} title={item.title} type={item.type ?? "video"} />
+      </div>
+    ))}
+  </div>
+</div>
+
+<script>
+  const FLAG = "__tmMediaFiltersBound";
+
+  const w = window as unknown as Record<string, boolean>;
+  if (!w[FLAG]) {
+    w[FLAG] = true;
+
+    document.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>(
+        ".media-archive .filter"
+      );
+      if (!button) return;
+
+      const archive = button.closest<HTMLElement>("[data-media-archive]");
+      if (!archive) return;
+
+      const active = button.dataset.filter ?? "All";
+
+      archive.querySelectorAll<HTMLButtonElement>(".filter").forEach((chip) => {
+        const isActive = chip === button;
+        chip.classList.toggle("is-active", isActive);
+        chip.setAttribute("aria-pressed", String(isActive));
+      });
+
+      let shown = 0;
+      archive.querySelectorAll<HTMLElement>(".media-item").forEach((item) => {
+        const match = active === "All" || item.dataset.category === active;
+        item.hidden = !match;
+        if (match) shown += 1;
+      });
+
+      const counter = archive.querySelector<HTMLElement>("[data-media-count]");
+      if (counter) {
+        counter.textContent = `${shown} ${shown === 1 ? "piece" : "pieces"}`;
+      }
+    });
+  }
+</script>
+
+<style>
+  .media-archive__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .filter {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.5rem 0.9rem;
+    min-height: 44px;
+    background: var(--paper);
+    color: var(--ink);
+    border: var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.15s var(--ease), color 0.15s var(--ease),
+      box-shadow 0.15s var(--ease);
+  }
+
+  .filter:hover {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .filter.is-active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .media-archive__count {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 1.5rem;
+  }
+
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    gap: clamp(1rem, 2.5vw, 1.8rem);
+  }
+
+  .media-item[hidden] {
+    display: none;
+  }
+</style>

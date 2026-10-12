@@ -1,0 +1,273 @@
+---
+interface Props {
+  heading?: string;
+  intro?: string;
+}
+
+const {
+  heading = "Free readiness checklist",
+  intro = "Six questions. No email required. Tick what is true today and see where the load is going.",
+} = Astro.props;
+
+const questions = [
+  "Your site loads in under two seconds on a phone.",
+  "Every page has one clear, obvious call to action.",
+  "A new lead gets a real reply within one business day.",
+  "Follow-up runs on a documented process, not memory.",
+  "You can update your own site without calling a developer.",
+  "You know which channel actually brings paying customers.",
+];
+---
+
+<div class="checklist" data-checklist>
+  <div class="checklist__head">
+    <h3 class="checklist__title">{heading}</h3>
+    <p class="checklist__intro">{intro}</p>
+  </div>
+
+  <fieldset class="checklist__fieldset">
+    <legend class="visually-hidden">Readiness questions</legend>
+    {questions.map((question, index) => (
+      <label class="checklist__item">
+        <input type="checkbox" data-check />
+        <span class="checklist__box" aria-hidden="true"></span>
+        <span class="checklist__text">
+          <span class="checklist__num">{String(index + 1).padStart(2, "0")}</span>
+          {question}
+        </span>
+      </label>
+    ))}
+  </fieldset>
+
+  <div class="checklist__result">
+    <div class="checklist__meter" role="progressbar" aria-valuemin="0" aria-valuemax={questions.length} aria-valuenow="0" data-meter aria-label="Checklist score">
+      <span class="checklist__meter-fill" data-meter-fill></span>
+    </div>
+    <p class="checklist__score">
+      <strong data-score>0</strong> of {questions.length} in place
+    </p>
+    <p class="checklist__verdict" data-verdict aria-live="polite">
+      Tick the boxes to see where the load is going.
+    </p>
+    <div class="checklist__actions">
+      <a class="btn btn--amber" href="#start">Start a project</a>
+      <button class="btn btn--ghost" type="button" data-reset>Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const FLAG = "__tmReadinessBound";
+  const w = window as unknown as Record<string, boolean>;
+
+  if (!w[FLAG]) {
+    w[FLAG] = true;
+
+    function update(root: HTMLElement) {
+      const boxes = Array.from(root.querySelectorAll<HTMLInputElement>("[data-check]"));
+      const total = boxes.length;
+      const checked = boxes.filter((box) => box.checked).length;
+
+      const score = root.querySelector<HTMLElement>("[data-score]");
+      const verdict = root.querySelector<HTMLElement>("[data-verdict]");
+      const meter = root.querySelector<HTMLElement>("[data-meter]");
+      const fill = root.querySelector<HTMLElement>("[data-meter-fill]");
+
+      if (score) score.textContent = String(checked);
+      if (meter) meter.setAttribute("aria-valuenow", String(checked));
+      if (fill) fill.style.width = `${total ? (checked / total) * 100 : 0}%`;
+
+      if (verdict) {
+        let message = "Tick the boxes to see where the load is going.";
+        if (checked <= 2) {
+          message =
+            "Carrying too much load. Start with a systems audit to find the failing members.";
+        } else if (checked <= 4) {
+          message =
+            "Structurally sound, but the gaps are costing you. Focused work will close them fast.";
+        } else {
+          message =
+            "Solid foundation. Now it is about leverage, systems, and handing off the load.";
+        }
+        verdict.textContent = message;
+      }
+    }
+
+    document.addEventListener("change", (event) => {
+      const root = (event.target as HTMLElement | null)?.closest<HTMLElement>(
+        "[data-checklist]"
+      );
+      if (root) update(root);
+    });
+
+    document.addEventListener("click", (event) => {
+      const reset = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>(
+        "[data-reset]"
+      );
+      if (!reset) return;
+      const root = reset.closest<HTMLElement>("[data-checklist]");
+      if (!root) return;
+      root.querySelectorAll<HTMLInputElement>("[data-check]").forEach((box) => {
+        box.checked = false;
+      });
+      update(root);
+    });
+  }
+</script>
+
+<style>
+  .checklist {
+    display: grid;
+    grid-template-columns: 1fr 0.85fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    border: var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    padding: clamp(1.4rem, 4vw, 2.4rem);
+  }
+
+  .checklist__title {
+    font-size: clamp(1.4rem, 1rem + 2vw, 2.1rem);
+    margin-bottom: 0.4rem;
+  }
+
+  .checklist__intro {
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .checklist__fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+
+  .checklist__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.7rem 0.75rem;
+    border: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
+  }
+
+  .checklist__item:hover {
+    border-color: var(--ink);
+  }
+
+  .checklist__item input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .checklist__item:has(input:focus-visible) {
+    outline: 3px solid var(--amber);
+    outline-offset: 2px;
+  }
+
+  .checklist__item:has(input:checked) {
+    background: color-mix(in srgb, var(--amber) 14%, var(--surface));
+    border-color: var(--ink);
+  }
+
+  .checklist__box {
+    flex: none;
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-top: 0.1rem;
+    border: var(--border);
+    background: var(--paper);
+    position: relative;
+  }
+
+  .checklist__item input:checked + .checklist__box::after {
+    content: "\2713";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  .checklist__text {
+    font-size: 0.97rem;
+  }
+
+  .checklist__num {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--amber-deep);
+    margin-right: 0.4rem;
+  }
+
+  .checklist__result {
+    display: grid;
+    align-content: start;
+    gap: 0.9rem;
+    padding: clamp(1rem, 3vw, 1.6rem);
+    background: var(--paper);
+    border: var(--border);
+    border-radius: var(--radius);
+  }
+
+  .checklist__meter {
+    height: 1.4rem;
+    border: var(--border);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .checklist__meter-fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      var(--amber),
+      var(--amber) 8px,
+      var(--amber-soft) 8px,
+      var(--amber-soft) 16px
+    );
+    transition: width 0.35s var(--ease);
+  }
+
+  .checklist__score {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+  }
+
+  .checklist__score strong {
+    font-size: 1.6rem;
+    color: var(--amber-deep);
+  }
+
+  .checklist__verdict {
+    margin: 0;
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    min-height: 3.5em;
+  }
+
+  .checklist__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  @media (max-width: 820px) {
+    .checklist {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

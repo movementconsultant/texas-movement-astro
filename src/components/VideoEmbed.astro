@@ -1,0 +1,232 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  type?: "video" | "playlist";
+  isShort?: boolean;
+  poster?: string;
+}
+
+const {
+  id,
+  title,
+  type = "video",
+  isShort = false,
+  poster,
+} = Astro.props;
+
+const isPlaylist = type === "playlist";
+const isValidId = /^[A-Za-z0-9_-]{11}$/.test(id);
+
+const embedUrl = isPlaylist
+  ? `https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(id)}`
+  : `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}`;
+
+const watchUrl = isPlaylist
+  ? `https://www.youtube.com/playlist?list=${encodeURIComponent(id)}`
+  : `https://www.youtube.com/watch?v=${encodeURIComponent(id)}`;
+
+const thumbnail =
+  poster ?? (!isPlaylist && isValidId ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : null);
+
+const frameClass = isShort ? "video-frame video-frame--short" : "video-frame";
+---
+
+<figure class={frameClass}>
+  <a
+    class="video-facade"
+    href={watchUrl}
+    data-embed={embedUrl}
+    data-title={title}
+    aria-label={`Play: ${title}`}
+  >
+    {thumbnail && (
+      <img
+        src={thumbnail}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        referrerpolicy="no-referrer"
+        width="480"
+        height="360"
+      />
+    )}
+    <span class="video-facade__shade" aria-hidden="true"></span>
+    <span class="video-facade__play" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+        <path d="M8 5v14l11-7z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="video-facade__meta">
+      <span class="video-facade__title">{title}</span>
+      <span class="video-facade__note">
+        {isPlaylist ? "Load YouTube playlist" : "Load YouTube player"}
+      </span>
+    </span>
+  </a>
+  <figcaption>{title}</figcaption>
+</figure>
+
+<script>
+  const FLAG = "__tmVideoFacadesBound";
+
+  function embed(facade: HTMLAnchorElement) {
+    const frame = facade.closest(".video-frame");
+    if (!frame || frame.querySelector("iframe")) return;
+
+    const embedUrl = facade.dataset.embed;
+    const title = facade.dataset.title ?? "Video player";
+    if (!embedUrl) return;
+
+    const url = new URL(embedUrl);
+    url.searchParams.set("autoplay", "1");
+    url.searchParams.set("playsinline", "1");
+    url.searchParams.set("rel", "0");
+
+    const iframe = document.createElement("iframe");
+    iframe.src = url.toString();
+    iframe.title = title;
+    iframe.setAttribute(
+      "allow",
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    );
+    iframe.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+    iframe.setAttribute("allowfullscreen", "true");
+
+    facade.replaceWith(iframe);
+    iframe.focus();
+  }
+
+  const w = window as unknown as Record<string, boolean>;
+  if (!w[FLAG]) {
+    w[FLAG] = true;
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement | null;
+      const facade = target?.closest<HTMLAnchorElement>(".video-facade");
+      if (!facade) return;
+      event.preventDefault();
+      embed(facade);
+    });
+  }
+</script>
+
+<style>
+  .video-frame {
+    margin: 0;
+  }
+
+  .video-facade,
+  .video-frame iframe {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: var(--border-thick);
+    background: var(--ink);
+    color: var(--paper);
+    overflow: hidden;
+  }
+
+  .video-frame--short .video-facade,
+  .video-frame--short iframe {
+    aspect-ratio: 9 / 16;
+  }
+
+  .video-facade {
+    text-decoration: none;
+    color: var(--paper);
+  }
+
+  .video-facade img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.85) contrast(1.02);
+    transition: transform 0.4s var(--ease), filter 0.3s var(--ease);
+  }
+
+  .video-facade:hover img,
+  .video-facade:focus-visible img {
+    transform: scale(1.04);
+    filter: saturate(1) contrast(1.05);
+  }
+
+  .video-facade__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(20, 32, 43, 0.85) 0%,
+      rgba(20, 32, 43, 0.15) 55%,
+      rgba(20, 32, 43, 0.35) 100%
+    );
+  }
+
+  .video-facade__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--amber);
+    color: var(--ink);
+    border: var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s var(--ease), background 0.2s var(--ease);
+  }
+
+  .video-frame--short .video-facade__play {
+    width: 52px;
+    height: 52px;
+  }
+
+  .video-facade:hover .video-facade__play,
+  .video-facade:focus-visible .video-facade__play {
+    transform: translate(-50%, -50%) scale(1.08);
+    background: var(--amber-soft);
+  }
+
+  .video-facade__meta {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.9rem 1rem;
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .video-facade__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.98rem;
+    line-height: 1.2;
+  }
+
+  .video-facade__note {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber-soft);
+  }
+
+  .video-frame iframe {
+    border: var(--border-thick);
+  }
+
+  figcaption {
+    margin-top: 0.65rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,201 @@
+---
+interface Props {
+  title: string;
+  status: "Live" | "In development" | "Concept";
+  accent?: string;
+  description: string;
+  concepts?: string[];
+  shield?: string;
+  href?: string;
+  hrefLabel?: string;
+}
+
+const {
+  title,
+  status,
+  accent = "var(--amber)",
+  description,
+  concepts = [],
+  shield,
+  href,
+  hrefLabel = "Explore",
+} = Astro.props;
+
+const statusModifier = status.toLowerCase().replace(/\s+/g, "-");
+---
+
+<article class="pcard" style={`--pcard-accent: ${accent}`}>
+  <div class="pcard__top">
+    <span class:list={["pcard__status", `is-${statusModifier}`]}>{status}</span>
+    <span class="pcard__rule" aria-hidden="true"></span>
+  </div>
+
+  <h3 class="pcard__title">{title}</h3>
+  <p class="pcard__desc">{description}</p>
+
+  {concepts.length > 0 && (
+    <ul class="pcard__concepts">
+      {concepts.map((concept) => <li>{concept}</li>)}
+    </ul>
+  )}
+
+  {shield && (
+    <p class="pcard__shield">
+      <span class="pcard__shield-label">Shield protocol</span>
+      {shield}
+    </p>
+  )}
+
+  {href ? (
+    <a class="pcard__link" href={href}>
+      {hrefLabel} <span aria-hidden="true">&rarr;</span>
+    </a>
+  ) : (
+    <span class="pcard__link pcard__link--muted">Proof shown on request</span>
+  )}
+</article>
+
+<style>
+  .pcard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    background: var(--surface);
+    border: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border-top: 6px solid var(--pcard-accent);
+    transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  }
+
+  .pcard:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+
+  .pcard__top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .pcard__status {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 0.25rem 0.5rem;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .pcard__status.is-live {
+    background: var(--green);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .pcard__status.is-in-development {
+    background: var(--amber);
+    color: var(--ink);
+  }
+
+  .pcard__status.is-concept {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .pcard__rule {
+    flex: 1;
+    height: 2px;
+    background: color-mix(in srgb, var(--ink) 25%, transparent);
+  }
+
+  .pcard__title {
+    font-size: 1.35rem;
+    margin: 0;
+  }
+
+  .pcard__desc {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+  }
+
+  .pcard__concepts {
+    list-style: none;
+    margin: 0.4rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .pcard__concepts li {
+    position: relative;
+    padding-left: 1.1rem;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+
+  .pcard__concepts li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--pcard-accent);
+    border: 2px solid var(--ink);
+    transform: rotate(45deg);
+  }
+
+  .pcard__shield {
+    margin: auto 0 0;
+    padding: 0.7rem 0.8rem;
+    background: var(--paper);
+    border: 2px dashed color-mix(in srgb, var(--ink) 45%, transparent);
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .pcard__shield-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber-deep);
+    margin-bottom: 0.2rem;
+  }
+
+  .pcard__link {
+    margin-top: auto;
+    align-self: flex-start;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    color: var(--amber-deep);
+    display: inline-flex;
+    gap: 0.4rem;
+  }
+
+  .pcard__link span {
+    transition: transform 0.18s var(--ease);
+  }
+
+  .pcard__link:hover span {
+    transform: translateX(5px);
+  }
+
+  .pcard__link--muted {
+    color: var(--muted);
+    cursor: default;
+  }
+</style>

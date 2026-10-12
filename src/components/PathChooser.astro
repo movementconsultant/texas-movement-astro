@@ -1,0 +1,163 @@
+---
+interface Path {
+  service: string;
+  title: string;
+  description: string;
+  href: string;
+  action: string;
+}
+
+interface Props {
+  paths?: Path[];
+}
+
+const defaultPaths: Path[] = [
+  {
+    service: "Websites & launch pages",
+    title: "I need a website",
+    description:
+      "A focused site or landing page that loads fast, ranks, and turns visitors into calls and forms.",
+    href: "#ventures",
+    action: "See website work",
+  },
+  {
+    service: "Consulting: systems audit",
+    title: "I need systems & strategy",
+    description:
+      "Map how the business actually runs, find what is breaking, and get a ranked plan to fix it.",
+    href: "#work",
+    action: "See consulting",
+  },
+  {
+    service: "Media: video production",
+    title: "I need content & media",
+    description:
+      "Script, shoot, edit, and publish. Short-form, long-form, and everything the algorithm punishes you for ignoring.",
+    href: "#media-archive",
+    action: "See the archive",
+  },
+  {
+    service: "Performance & courses",
+    title: "I need performance training",
+    description:
+      "The mindset and execution systems behind Elite Secrets, built for operators who refuse to stall.",
+    href: "#performance",
+    action: "See performance",
+  },
+  {
+    service: "Not sure yet",
+    title: "I'm not sure yet",
+    description:
+      "Start with the free readiness checklist, then we can point you at the one thing worth doing first.",
+    href: "#readiness",
+    action: "Run the checklist",
+  },
+];
+
+const { paths = defaultPaths } = Astro.props;
+---
+
+<div class="path-grid">
+  {paths.map((path, index) => (
+    <a
+      class="path-card"
+      href={path.href}
+      data-service={path.service}
+      data-path-action={path.action}
+    >
+      <span class="path-card__index">{String(index + 1).padStart(2, "0")}</span>
+      <h3>{path.title}</h3>
+      <p>{path.description}</p>
+      <span class="path-card__go">
+        {path.action}
+        <span aria-hidden="true">&rarr;</span>
+      </span>
+    </a>
+  ))}
+</div>
+
+<style>
+  .path-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    gap: clamp(1rem, 2.5vw, 1.6rem);
+  }
+
+  .path-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.4rem;
+    min-height: 100%;
+    background: var(--paper);
+    border: var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease),
+      background 0.18s var(--ease);
+  }
+
+  .path-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 3px solid var(--amber);
+    opacity: 0;
+    transition: opacity 0.18s var(--ease);
+    pointer-events: none;
+  }
+
+  .path-card:hover,
+  .path-card:focus-visible {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow);
+    color: var(--ink);
+  }
+
+  .path-card:hover::after,
+  .path-card:focus-visible::after {
+    opacity: 1;
+  }
+
+  .path-card__index {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    color: var(--amber-deep);
+  }
+
+  .path-card h3 {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .path-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.96rem;
+    flex: 1;
+  }
+
+  .path-card__go {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--amber-deep);
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .path-card__go span {
+    transition: transform 0.18s var(--ease);
+  }
+
+  .path-card:hover .path-card__go span {
+    transform: translateX(5px);
+  }
+</style>

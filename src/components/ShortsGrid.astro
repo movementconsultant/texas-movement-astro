@@ -1,0 +1,66 @@
+---
+import VideoEmbed from "./VideoEmbed.astro";
+
+interface Props {
+  shorts: { id: string; title: string }[];
+  heading?: string;
+  note?: string;
+}
+
+const {
+  shorts,
+  heading = "Shorts",
+  note = "Vertical cuts from the field.",
+} = Astro.props;
+---
+
+<section class="shorts" aria-label={heading}>
+  <div class="shorts__head">
+    <h3 class="shorts__title">{heading}</h3>
+    <p class="shorts__note">{note}</p>
+  </div>
+  <div class="shorts-grid">
+    {shorts.map((short) => (
+      <VideoEmbed id={short.id} title={short.title} isShort />
+    ))}
+  </div>
+</section>
+
+<style>
+  .shorts {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .shorts__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+    padding-bottom: 0.6rem;
+  }
+
+  .shorts__title {
+    font-size: 1.1rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .shorts__note {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .shorts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(170px, 100%), 1fr));
+    gap: clamp(0.9rem, 2vw, 1.4rem);
+  }
+</style>

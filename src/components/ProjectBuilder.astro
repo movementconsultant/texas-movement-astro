@@ -1,0 +1,612 @@
+---
+interface Props {
+  email?: string;
+  endpoint?: string;
+  heading?: string;
+  intro?: string;
+}
+
+const {
+  email = "contact@texasmovement.com",
+  endpoint = "",
+  heading = "Start a project",
+  intro = "Four short steps. You will get a scoped reply, not a sales sequence.",
+} = Astro.props;
+
+const serviceOptions = [
+  "Websites & launch pages",
+  "Consulting: systems audit",
+  "Media: video production",
+  "Performance & courses",
+  "Not sure yet",
+];
+---
+
+<div class="builder" data-builder data-endpoint={endpoint} data-email={email}>
+  <div class="builder__aside">
+    <h2 class="builder__title">{heading}</h2>
+    <p class="builder__intro">{intro}</p>
+    <ol class="builder__track" aria-hidden="true">
+      <li data-track="1">Goal</li>
+      <li data-track="2">Scope</li>
+      <li data-track="3">Timing</li>
+      <li data-track="4">Contact</li>
+    </ol>
+    <p class="builder__note">
+      Prefer email? <a href={`mailto:${email}`}>{email}</a>
+    </p>
+  </div>
+
+  <form class="builder__form" novalidate data-form>
+    <p class="builder__status" data-status aria-live="polite"></p>
+
+    <!-- Step 1 -->
+    <fieldset class="builder__step" data-step="1">
+      <legend>What is the goal?</legend>
+      <div class="builder__options">
+        {[
+          { v: "A website", d: "A focused page or full site." },
+          { v: "Systems & strategy", d: "Audit, plan, and workflows." },
+          { v: "Content & media", d: "Script, shoot, edit, publish." },
+          { v: "Performance", d: "Training and elite execution." },
+          { v: "Not sure yet", d: "Help me pick the first move." },
+        ].map((option) => (
+          <label class="choice">
+            <input type="radio" name="goal" value={option.v} />
+            <span class="choice__body">
+              <span class="choice__title">{option.v}</span>
+              <span class="choice__desc">{option.d}</span>
+            </span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+
+    <!-- Step 2 -->
+    <fieldset class="builder__step" data-step="2" hidden>
+      <legend>What should we take on?</legend>
+      <div class="builder__options">
+        {serviceOptions.map((service) => (
+          <label class="choice">
+            <input type="checkbox" name="services" value={service} data-service-input />
+            <span class="choice__body">
+              <span class="choice__title">{service}</span>
+            </span>
+          </label>
+        ))}
+      </div>
+      <p class="builder__sublegend">Engagement shape</p>
+      <div class="builder__options builder__options--compact">
+        {[
+          { v: "Focused launch", d: "One tight scope, shipped fast." },
+          { v: "Full systems build", d: "Audit through handover." },
+        ].map((option) => (
+          <label class="choice">
+            <input type="radio" name="shape" value={option.v} />
+            <span class="choice__body">
+              <span class="choice__title">{option.v}</span>
+              <span class="choice__desc">{option.d}</span>
+            </span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+
+    <!-- Step 3 -->
+    <fieldset class="builder__step" data-step="3" hidden>
+      <legend>Timing and range</legend>
+      <p class="builder__sublegend">When do you want to start?</p>
+      <div class="builder__options builder__options--compact">
+        {["Now", "This month", "This quarter", "Just exploring"].map((option) => (
+          <label class="choice">
+            <input type="radio" name="timeline" value={option} />
+            <span class="choice__body">
+              <span class="choice__title">{option}</span>
+            </span>
+          </label>
+        ))}
+      </div>
+      <label class="field">
+        <span>Anything we should know?</span>
+        <textarea name="notes" rows="4" placeholder="Current site, deadline, constraints, links..."></textarea>
+      </label>
+    </fieldset>
+
+    <!-- Step 4 -->
+    <fieldset class="builder__step" data-step="4" hidden>
+      <legend>Where do we send the reply?</legend>
+      <div class="builder__fields">
+        <label class="field">
+          <span>Name <em aria-hidden="true">*</em></span>
+          <input type="text" name="name" autocomplete="name" required />
+        </label>
+        <label class="field">
+          <span>Email <em aria-hidden="true">*</em></span>
+          <input type="email" name="email" autocomplete="email" required />
+        </label>
+        <label class="field">
+          <span>Company / project</span>
+          <input type="text" name="company" autocomplete="organization" />
+        </label>
+      </div>
+      <div class="builder__review" data-review hidden>
+        <p class="builder__review-label">Summary</p>
+        <pre data-review-body></pre>
+      </div>
+    </fieldset>
+
+    <div class="builder__nav">
+      <button type="button" class="btn btn--ghost" data-back hidden>&larr; Back</button>
+      <button type="button" class="btn" data-next>Next &rarr;</button>
+      <button type="submit" class="btn btn--amber" data-submit hidden>Send request</button>
+    </div>
+  </form>
+
+  <noscript>
+    <p class="builder__noscript">
+      This builder needs JavaScript. Email
+      <a href={`mailto:${email}`}>{email}</a> and we will take it from there.
+    </p>
+  </noscript>
+</div>
+
+<script>
+  const FLAG = "__tmBuilderBound";
+  const w = window as unknown as Record<string, boolean>;
+
+  if (!w[FLAG]) {
+    w[FLAG] = true;
+
+    function formData(form: HTMLFormElement) {
+      return new FormData(form);
+    }
+
+    function collect(form: HTMLFormElement) {
+      const data = formData(form);
+      return {
+        goal: String(data.get("goal") ?? ""),
+        services: data.getAll("services").map(String),
+        shape: String(data.get("shape") ?? ""),
+        timeline: String(data.get("timeline") ?? ""),
+        notes: String(data.get("notes") ?? ""),
+        name: String(data.get("name") ?? ""),
+        email: String(data.get("email") ?? ""),
+        company: String(data.get("company") ?? ""),
+      };
+    }
+
+    function summaryText(info: ReturnType<typeof collect>) {
+      const lines = [
+        `Goal: ${info.goal || "-"}`,
+        `Services: ${info.services.join(", ") || "-"}`,
+        `Shape: ${info.shape || "-"}`,
+        `Timeline: ${info.timeline || "-"}`,
+        info.notes ? `Notes: ${info.notes}` : null,
+        `Name: ${info.name || "-"}`,
+        `Email: ${info.email || "-"}`,
+        info.company ? `Company: ${info.company}` : null,
+      ];
+      return lines.filter(Boolean).join("\n");
+    }
+
+    function currentStep(root: HTMLElement) {
+      return Number(root.dataset.step ?? "1");
+    }
+
+    function showStep(root: HTMLElement, step: number) {
+      root.dataset.step = String(step);
+      root.querySelectorAll<HTMLElement>(".builder__step").forEach((panel) => {
+        panel.hidden = Number(panel.dataset.step) !== step;
+      });
+
+      const total = root.querySelectorAll(".builder__step").length;
+      root.querySelectorAll<HTMLElement>("[data-track]").forEach((marker) => {
+        const index = Number(marker.dataset.track ?? "0");
+        marker.classList.toggle("is-active", index === step);
+        marker.classList.toggle("is-done", index < step);
+      });
+
+      const back = root.querySelector<HTMLButtonElement>("[data-back]");
+      const next = root.querySelector<HTMLButtonElement>("[data-next]");
+      const submit = root.querySelector<HTMLButtonElement>("[data-submit]");
+      if (back) back.hidden = step === 1;
+      if (next) next.hidden = step === total;
+      if (submit) submit.hidden = step !== total;
+
+      if (step === total) {
+        const review = root.querySelector<HTMLElement>("[data-review]");
+        const body = root.querySelector<HTMLElement>("[data-review-body]");
+        const form = root.querySelector<HTMLFormElement>("form");
+        if (review && body && form) {
+          body.textContent = summaryText(collect(form));
+          review.hidden = false;
+        }
+      }
+    }
+
+    function validateStep(root: HTMLElement, step: number): boolean {
+      const status = root.querySelector<HTMLElement>("[data-status]");
+      const setStatus = (message: string) => {
+        if (status) status.textContent = message;
+      };
+
+      if (step === 1) {
+        const goal = root.querySelector<HTMLInputElement>('input[name="goal"]:checked');
+        if (!goal) {
+          setStatus("Pick a goal to continue.");
+          return false;
+        }
+      }
+      if (step === 4) {
+        const form = root.querySelector<HTMLFormElement>("form");
+        const data = form ? formData(form) : null;
+        const name = String(data?.get("name") ?? "").trim();
+        const email = String(data?.get("email") ?? "").trim();
+        if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+          setStatus("Add your name and a valid email.");
+          return false;
+        }
+      }
+      setStatus("");
+      return true;
+    }
+
+    function bind(root: HTMLElement) {
+      const form = root.querySelector<HTMLFormElement>("form");
+      if (!form) return;
+
+      root.dataset.step = "1";
+      showStep(root, 1);
+
+      root.querySelector("[data-next]")?.addEventListener("click", () => {
+        const step = currentStep(root);
+        if (!validateStep(root, step)) return;
+        showStep(root, step + 1);
+      });
+
+      root.querySelector("[data-back]")?.addEventListener("click", () => {
+        showStep(root, Math.max(1, currentStep(root) - 1));
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const step = currentStep(root);
+        if (!validateStep(root, step)) return;
+
+        const info = collect(form);
+        const endpoint = root.dataset.endpoint?.trim();
+        const email = root.dataset.email ?? "";
+        const status = root.querySelector<HTMLElement>("[data-status]");
+
+        if (endpoint) {
+          try {
+            const response = await fetch(endpoint, {
+              method: "POST",
+              headers: { Accept: "application/json" },
+              body: formData(form),
+            });
+            if (!response.ok) throw new Error("Request failed");
+            if (status) status.textContent = "Request sent. Check your inbox soon.";
+            form.reset();
+            showStep(root, 1);
+          } catch {
+            if (status) {
+              status.textContent = `Could not send. Email ${email} instead.`;
+            }
+          }
+          return;
+        }
+
+        const subject = encodeURIComponent(`Project request: ${info.goal || "New project"}`);
+        const body = encodeURIComponent(summaryText(info));
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        if (status) status.textContent = "Opening your email client...";
+      });
+    }
+
+    document.querySelectorAll<HTMLElement>("[data-builder]").forEach(bind);
+
+    // Preselect services when a path card is chosen.
+    document.addEventListener("click", (event) => {
+      const path = (event.target as HTMLElement | null)?.closest<HTMLElement>(
+        "[data-service]"
+      );
+      if (!path) return;
+      const service = path.dataset.service;
+      if (!service) return;
+
+      document.querySelectorAll<HTMLElement>("[data-builder]").forEach((root) => {
+        const input = root.querySelector<HTMLInputElement>(
+          `input[data-service-input][value="${CSS.escape(service)}"]`
+        );
+        if (input) input.checked = true;
+      });
+    });
+  }
+</script>
+
+<style>
+  .builder {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    border: var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    padding: clamp(1.4rem, 4vw, 2.4rem);
+  }
+
+  .builder__title {
+    font-size: clamp(1.6rem, 1.1rem + 2.4vw, 2.4rem);
+    margin-bottom: 0.4rem;
+  }
+
+  .builder__intro {
+    color: var(--muted);
+    margin-bottom: 1.6rem;
+  }
+
+  .builder__track {
+    list-style: none;
+    margin: 0 0 1.6rem;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    counter-reset: step;
+  }
+
+  .builder__track li {
+    position: relative;
+    padding-left: 2.4rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .builder__track li::before {
+    counter-increment: step;
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: -0.15rem;
+    width: 1.7rem;
+    height: 1.7rem;
+    display: grid;
+    place-items: center;
+    border: 2px solid color-mix(in srgb, var(--ink) 35%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .builder__track li.is-active {
+    color: var(--ink);
+  }
+
+  .builder__track li.is-active::before {
+    background: var(--amber);
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .builder__track li.is-done::before {
+    content: "\2713";
+    background: var(--green);
+    border-color: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-body);
+  }
+
+  .builder__note {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .builder__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .builder__status {
+    margin: 0;
+    min-height: 1.4em;
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--rust);
+  }
+
+  .builder__step {
+    border: var(--border);
+    border-radius: var(--radius);
+    background: var(--paper);
+    padding: clamp(1rem, 3vw, 1.6rem);
+    margin: 0;
+  }
+
+  .builder__step[hidden] {
+    display: none;
+  }
+
+  .builder__step legend {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    padding: 0 0.4rem;
+  }
+
+  .builder__sublegend {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber-deep);
+    margin: 1.1rem 0 0.6rem;
+  }
+
+  .builder__options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+    gap: 0.6rem;
+  }
+
+  .builder__options--compact {
+    grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+  }
+
+  .choice {
+    display: block;
+    cursor: pointer;
+  }
+
+  .choice input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .choice__body {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.8rem 0.9rem;
+    min-height: 44px;
+    background: var(--surface);
+    border: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: var(--radius);
+    transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
+  }
+
+  .choice:hover .choice__body {
+    border-color: var(--ink);
+  }
+
+  .choice input:focus-visible + .choice__body {
+    outline: 3px solid var(--amber);
+    outline-offset: 2px;
+  }
+
+  .choice input:checked + .choice__body {
+    border-color: var(--ink);
+    background: color-mix(in srgb, var(--amber) 16%, var(--surface));
+    box-shadow: inset 4px 0 0 var(--amber);
+  }
+
+  .choice__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .choice__desc {
+    font-size: 0.84rem;
+    color: var(--muted);
+  }
+
+  .field {
+    display: grid;
+    gap: 0.35rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .field em {
+    color: var(--rust);
+    font-style: normal;
+  }
+
+  .field input,
+  .field textarea {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    padding: 0.7rem 0.8rem;
+    min-height: 44px;
+    background: var(--surface);
+    color: var(--ink);
+    border: var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    outline: 3px solid var(--amber);
+    outline-offset: 1px;
+  }
+
+  .builder__fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .builder__review {
+    border: 2px dashed color-mix(in srgb, var(--ink) 45%, transparent);
+    padding: 0.8rem 1rem;
+    background: var(--surface);
+  }
+
+  .builder__review-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber-deep);
+    margin: 0 0 0.4rem;
+  }
+
+  .builder__review pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+
+  .builder__nav {
+    display: flex;
+    gap: 0.7rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .builder__nav .btn[hidden] {
+    display: none;
+  }
+
+  .builder__noscript {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 1rem;
+    border: 2px dashed var(--rust);
+    color: var(--rust);
+  }
+
+  @media (max-width: 860px) {
+    .builder {
+      grid-template-columns: 1fr;
+    }
+    .builder__track {
+      grid-auto-flow: column;
+      justify-content: start;
+      gap: 0.4rem;
+    }
+    .builder__track li {
+      padding-left: 1.9rem;
+      font-size: 0.72rem;
+    }
+  }
+</style>

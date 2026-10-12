@@ -1,0 +1,606 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import BridgeTruss from "../components/BridgeTruss.astro";
+import PathChooser from "../components/PathChooser.astro";
+import VideoEmbed from "../components/VideoEmbed.astro";
+import MediaArchive from "../components/MediaArchive.astro";
+import ShortsGrid from "../components/ShortsGrid.astro";
+import PortfolioCard from "../components/PortfolioCard.astro";
+import ConceptCompare from "../components/ConceptCompare.astro";
+import ReadinessChecklist from "../components/ReadinessChecklist.astro";
+import ProjectBuilder from "../components/ProjectBuilder.astro";
+
+const mediaItems = [
+  { id: "UEe2pXlHy1k", title: "TMC Call to Action", category: "Consulting" },
+  {
+    id: "PLfuA6emw6UmxLB43itgFOb0JnXdUwBAHV",
+    title: "Shades of AI (Series)",
+    category: "Media",
+    type: "playlist" as const,
+  },
+  { id: "AXGxlbM04i4", title: "Performance Breakdown I", category: "Performance" },
+  { id: "1qmvp0VjxbI", title: "Performance Breakdown II", category: "Performance" },
+  { id: "ZGEsb4fa3Tg", title: "Performance Breakdown III", category: "Performance" },
+];
+
+const shorts = [
+  { id: "DdBtsPrLWyw", title: "ProTalks: Building the Movement" },
+  { id: "ZErLbUsIKmk", title: "ProTalks: Founder Insights" },
+  { id: "CvWHPohZn4U", title: "ProTalks: Strategy Session" },
+  { id: "vNymMy4ALYg", title: "Performance: Elite Mindset" },
+  { id: "dAWW5s-oEgI", title: "Performance: Daily Execution" },
+  { id: "whLW_R_7lFU", title: "Performance: The Edge" },
+];
+
+const performanceVideos = [
+  { id: "AXGxlbM04i4", title: "Performance Breakdown I" },
+  { id: "1qmvp0VjxbI", title: "Performance Breakdown II" },
+  { id: "ZGEsb4fa3Tg", title: "Performance Breakdown III" },
+];
+
+const ventures = [
+  {
+    title: "HERO By Texas Movement",
+    status: "Live" as const,
+    accent: "var(--rust)",
+    description:
+      "Footwear and apparel built for people who move with purpose. A direct-to-consumer line rooted in Texas culture.",
+    concepts: ["Product story", "Launch campaign", "Commerce-ready landing"],
+    shield:
+      "Inventory and fulfilment run offline. Campaign concepts stay under wraps until the drop is ready.",
+    href: "https://hero.texasmovement.com",
+    hrefLabel: "Visit HERO",
+  },
+  {
+    title: "Texas Movement Media",
+    status: "Live" as const,
+    accent: "#7c3aed",
+    description:
+      "Script to screen: short-form social, long-form YouTube, and brand storytelling produced end to end.",
+    concepts: ["Script writing", "Production & editing", "Publishing & rights"],
+    href: "#media-archive",
+    hrefLabel: "Watch the work",
+  },
+  {
+    title: "Texas Movement Performance",
+    status: "In development" as const,
+    accent: "var(--green)",
+    description:
+      "Mindset and execution systems for operators. Home of the Elite Secrets methodology.",
+    concepts: ["Elite Secrets curriculum", "Training frameworks", "Cohort delivery"],
+    href: "#performance",
+    hrefLabel: "See performance",
+  },
+  {
+    title: "Future Ventures",
+    status: "Concept" as const,
+    accent: "var(--blue)",
+    description:
+      "New projects in development under the Texas Movement umbrella, kept quiet until they can stand on their own.",
+    concepts: ["Systems consulting productized", "AI-assisted workflows"],
+    shield:
+      "Offline and in diligence. No public claims, no invented traction, no leaks.",
+  },
+];
+---
+
+<BaseLayout
+  title="Texas Movement International | Diagnose it. Build it. Hand it over."
+  description="Texas Movement International builds strategy, websites, media, and AI workflows for founders and small organizations, then hands them over to run without us."
+>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <p class="eyebrow">Engineer-led systems for business &amp; performance</p>
+
+        <div class="tabs" role="tablist" aria-label="How we work" aria-orientation="vertical">
+          <button
+            class="tab"
+            role="tab"
+            id="t-diagnose"
+            aria-selected="true"
+            aria-controls="cap"
+            data-s="diagnose"
+          >
+            <span class="tab__num">01</span> Diagnose it.
+          </button>
+          <button
+            class="tab"
+            role="tab"
+            id="t-build"
+            aria-selected="false"
+            aria-controls="cap"
+            data-s="build"
+            tabindex="-1"
+          >
+            <span class="tab__num">02</span> Build it.
+          </button>
+          <button
+            class="tab"
+            role="tab"
+            id="t-transfer"
+            aria-selected="false"
+            aria-controls="cap"
+            data-s="transfer"
+            tabindex="-1"
+          >
+            <span class="tab__num">03</span> Hand it over.
+          </button>
+        </div>
+
+        <h1 class="hero__title display">Build systems that run without you.</h1>
+
+        <p class="lede">
+          Texas Movement International builds strategy, media, and AI workflows for
+          founders and small organizations, then hands them over to run without us.
+        </p>
+
+        <div class="actions">
+          <a class="btn" href="#choose">Choose your path</a>
+          <a class="btn btn--ghost" href="#start">Start a project</a>
+          <a class="actions__link" href="https://alexandermathai.com">Meet the founder &rarr;</a>
+        </div>
+      </div>
+
+      <BridgeTruss />
+    </div>
+  </section>
+
+  <!-- PATH CHOOSER -->
+  <section id="choose" class="surface section">
+    <div class="wrap">
+      <p class="eyebrow">One ecosystem. A clear next step.</p>
+      <h2 class="display section-title">What brings you here?</h2>
+      <p class="section-intro">
+        Choose your goal. Find the relevant work, tools, and next action without
+        having to navigate the entire ecosystem.
+      </p>
+      <div class="stack-lg">
+        <PathChooser />
+      </div>
+    </div>
+  </section>
+
+  <!-- CONSULTING & MEDIA -->
+  <section id="work" class="section">
+    <div class="wrap split">
+      <div class="split__col">
+        <h2 class="display split__title">Consulting</h2>
+        <p class="split__lede">
+          Strategy and systems for founders who have outgrown doing everything by hand.
+        </p>
+        <ul class="plain">
+          <li>
+            <strong>Systems audit</strong>
+            <span>A fixed-scope diagnostic of how your business actually runs.</span>
+          </li>
+          <li>
+            <strong>Strategic advisory</strong>
+            <span>Ongoing sessions on positioning, offers, and decisions.</span>
+          </li>
+          <li>
+            <strong>AI-assisted workflow design</strong>
+            <span>Automations your team can own and maintain.</span>
+          </li>
+        </ul>
+        <a class="btn" href="#start" data-service="Consulting: systems audit">
+          Start a Consulting project
+        </a>
+
+        <h3 class="video-label">Featured Broadcast</h3>
+        <VideoEmbed id="UEe2pXlHy1k" title="Texas Movement Consulting Broadcast" />
+      </div>
+
+      <div class="split__col">
+        <h2 class="display split__title">Media</h2>
+        <p class="split__lede">We write it, shoot it, edit it, and publish it.</p>
+        <ul class="plain">
+          <li>
+            <strong>Script writing</strong>
+            <span>Short-form social, YouTube and long-form, brand story.</span>
+          </li>
+          <li>
+            <strong>Video production and editing</strong>
+            <span>From direction on set to the final cut.</span>
+          </li>
+          <li>
+            <strong>Publishing and distribution</strong>
+            <span>Setup, scheduling, and rights protection.</span>
+          </li>
+        </ul>
+        <a class="btn" href="#start" data-service="Media: video production">
+          Start a Media project
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- VENTURES / WEBSITES -->
+  <section id="ventures" class="surface section">
+    <div class="wrap">
+      <p class="eyebrow">Websites &amp; ventures</p>
+      <h2 class="display section-title">Proof through concepts, not claims.</h2>
+      <p class="section-intro">
+        We show what a build would contain and how it would run. Where a venture is
+        offline or in diligence, we say so and keep it quiet.
+      </p>
+
+      <div class="stack-lg">
+        <ConceptCompare
+          options={[
+            {
+              name: "Focused Launch",
+              tagline: "One tight scope, shipped fast.",
+              features: [
+                "Single high-converting page",
+                "Copy, design, and build",
+                "Speed, SEO, and analytics basics",
+                "Launch support",
+              ],
+              idealFor: "New offers, events, and launches that need to be live now.",
+              cta: { label: "Start a launch", href: "#start" },
+            },
+            {
+              name: "Full Systems Build",
+              tagline: "Audit through handover.",
+              features: [
+                "Systems audit and roadmap",
+                "Site, media, and workflows",
+                "AI-assisted automation",
+                "Documentation and team training",
+              ],
+              idealFor: "Operators ready to move from doing everything by hand.",
+              featured: true,
+              cta: { label: "Start a build", href: "#start" },
+            },
+          ]}
+        />
+      </div>
+
+      <div class="card-grid stack-lg">
+        {ventures.map((venture) => (
+          <PortfolioCard
+            title={venture.title}
+            status={venture.status}
+            accent={venture.accent}
+            description={venture.description}
+            concepts={venture.concepts}
+            shield={venture.shield}
+            href={venture.href}
+            hrefLabel={venture.hrefLabel}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- MEDIA ARCHIVE -->
+  <section id="media-archive" class="section">
+    <div class="wrap">
+      <p class="eyebrow">Media archive</p>
+      <h2 class="display section-title">The work, in motion.</h2>
+      <p class="section-intro">
+        Broadcasts, series, and breakdowns. Filter by what you need to see.
+      </p>
+      <div class="stack-lg">
+        <MediaArchive items={mediaItems} />
+      </div>
+      <ShortsGrid shorts={shorts} heading="Shorts" note="Thirty seconds at a time." />
+    </div>
+  </section>
+
+  <!-- PERFORMANCE -->
+  <section id="performance" class="surface section">
+    <div class="wrap">
+      <p class="eyebrow">Texas Movement Performance</p>
+      <h2 class="display section-title">Elite execution, taught.</h2>
+      <p class="section-intro">
+        Mindset, methodology, and the systems that separate the good from the elite.
+      </p>
+
+      <div class="callout stack-lg">
+        <div>
+          <h3 class="callout__title">Master the game: Elite Secrets</h3>
+          <p class="callout__text">
+            The full breakdown of the frameworks, habits, and strategies behind
+            Texas Movement, delivered as a course.
+          </p>
+        </div>
+        <a
+          class="btn btn--amber"
+          href="https://www.udemy.com/course/elitesecrets/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Enroll on Udemy &rarr;
+        </a>
+      </div>
+
+      <div class="video-grid stack-lg">
+        {performanceVideos.map((video) => (
+          <VideoEmbed id={video.id} title={video.title} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- READINESS -->
+  <section id="readiness" class="section">
+    <div class="wrap">
+      <p class="eyebrow">Before you spend a dollar</p>
+      <h2 class="display section-title">How ready is the system?</h2>
+      <p class="section-intro">
+        A quick self-check. It tells you whether you need a rebuild or a repair.
+      </p>
+      <div class="stack-lg">
+        <ReadinessChecklist />
+      </div>
+    </div>
+  </section>
+
+  <!-- START -->
+  <section id="start" class="surface section">
+    <div class="wrap">
+      <p class="eyebrow">Start a project</p>
+      <h2 class="display section-title">Tell us where the load is going.</h2>
+      <div class="stack-lg">
+        <ProjectBuilder />
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDER -->
+  <section id="founder" class="section">
+    <div class="wrap founder">
+      <div>
+        <p class="eyebrow">The founder</p>
+        <h2 class="display section-title">Engineer first. Operator by necessity.</h2>
+        <p>
+          Texas Movement International is led by Alexander Mathai, an engineer who
+          builds performance and business systems that work without him. The work is
+          authored personally and delivered as documented, transferable systems.
+        </p>
+        <p class="founder__note">
+          The goal is simple: you should own what we build, and it should keep
+          running after we step back.
+        </p>
+        <a class="btn btn--ghost" href="https://alexandermathai.com">
+          Visit the founder site &rarr;
+        </a>
+      </div>
+      <dl class="founder__facts">
+        <div>
+          <dt>Base</dt>
+          <dd>Chicago, Illinois</dd>
+        </div>
+        <div>
+          <dt>Focus</dt>
+          <dd>Systems, media, performance</dd>
+        </div>
+        <div>
+          <dt>Method</dt>
+          <dd>Diagnose, build, hand over</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---- Hero ---- */
+  .hero {
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+  }
+
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1.6rem;
+    border-left: var(--border);
+    padding-left: 0;
+  }
+
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 44px;
+    padding: 0.55rem 0.9rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1rem, 0.8rem + 1vw, 1.35rem);
+    letter-spacing: -0.01em;
+    text-align: left;
+    background: transparent;
+    color: var(--muted);
+    border: 0;
+    border-left: 5px solid transparent;
+    margin-left: -3px;
+    cursor: pointer;
+    transition: color 0.18s var(--ease), border-color 0.18s var(--ease),
+      background 0.18s var(--ease);
+  }
+
+  .tab:hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--amber) 10%, transparent);
+  }
+
+  .tab[aria-selected="true"] {
+    color: var(--ink);
+    border-left-color: var(--amber);
+    background: color-mix(in srgb, var(--amber) 14%, transparent);
+  }
+
+  .tab__num {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  .hero__title {
+    font-size: clamp(2.2rem, 1.3rem + 3.6vw, 3.8rem);
+    margin-bottom: 0.5em;
+  }
+
+  .lede {
+    font-size: clamp(1.05rem, 1rem + 0.5vw, 1.3rem);
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin-bottom: 1.6rem;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem 1.2rem;
+    flex-wrap: wrap;
+  }
+
+  .actions__link {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    color: var(--ink);
+    box-shadow: inset 0 -2px 0 var(--amber);
+  }
+
+  .actions__link:hover {
+    color: var(--amber-deep);
+  }
+
+  /* ---- Split ---- */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .split__title {
+    font-size: clamp(1.8rem, 1.2rem + 2.4vw, 2.8rem);
+    margin-bottom: 0.3em;
+  }
+
+  .split__lede {
+    color: var(--ink-soft);
+    font-size: 1.08rem;
+    max-width: 40ch;
+  }
+
+  .video-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber-deep);
+    margin: 2.5rem 0 0.9rem;
+  }
+
+  /* ---- Layout helpers ---- */
+  .stack-lg {
+    margin-top: clamp(1.8rem, 4vw, 3rem);
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: clamp(1rem, 2.5vw, 1.8rem);
+  }
+
+  /* ---- Performance callout ---- */
+  .callout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2.5rem;
+    flex-wrap: wrap;
+    padding: clamp(1.4rem, 4vw, 2.4rem);
+    background: var(--paper);
+    border: var(--border);
+    border-left: 8px solid var(--green);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .callout__title {
+    font-size: clamp(1.4rem, 1rem + 1.8vw, 2rem);
+    margin-bottom: 0.3rem;
+  }
+
+  .callout__text {
+    margin: 0;
+    color: var(--ink-soft);
+    max-width: 46ch;
+  }
+
+  /* ---- Founder ---- */
+  .founder {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .founder__note {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--amber-deep);
+  }
+
+  .founder__facts {
+    margin: 0;
+    border-top: var(--border);
+  }
+
+  .founder__facts div {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  }
+
+  .founder__facts dt {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber-deep);
+    padding-top: 0.25rem;
+  }
+
+  .founder__facts dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 900px) {
+    .hero__grid,
+    .split,
+    .founder {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .founder__facts div {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+  }
+</style>

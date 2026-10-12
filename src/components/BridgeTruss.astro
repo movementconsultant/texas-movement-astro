@@ -1,0 +1,349 @@
+---
+interface Props {
+  initialState?: "diagnose" | "build" | "transfer";
+}
+
+const { initialState = "diagnose" } = Astro.props;
+---
+
+<figure class="truss-figure">
+  <div class="truss-stage">
+    <svg
+      id="truss"
+      data-state={initialState}
+      viewBox="0 0 640 290"
+      role="img"
+      aria-label="A bridge truss diagram. Failing members are marked, replaced with cross-bracing, then handed over to the owner."
+    >
+      <defs>
+        <marker id="truss-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="var(--rust)" />
+        </marker>
+      </defs>
+
+      <!-- supports -->
+      <g class="support">
+        <path d="M70 214 L50 248 H90 Z" />
+        <path d="M570 214 L550 248 H590 Z" />
+        <path class="ground" d="M30 248 H610" />
+      </g>
+
+      <!-- structure -->
+      <g class="member top-chord">
+        <path d="M70 110 H570" />
+      </g>
+      <g class="member bottom-chord">
+        <path d="M70 210 H570" />
+      </g>
+
+      <g class="member verticals">
+        <path d="M70 110 V210" />
+        <path d="M195 110 V210" />
+        <path d="M320 110 V210" />
+        <path d="M445 110 V210" />
+        <path d="M570 110 V210" />
+      </g>
+
+      <g class="member diagonals">
+        <path d="M70 210 L195 110" />
+        <path d="M195 110 L320 210" class="weak" />
+        <path d="M320 210 L445 110" class="weak" />
+        <path d="M445 110 L570 210" />
+      </g>
+
+      <!-- replacement cross-bracing -->
+      <g class="member new">
+        <path d="M195 210 L320 110" />
+        <path d="M320 110 L445 210" />
+      </g>
+
+      <!-- nodes -->
+      <g class="nodes">
+        <circle cx="70" cy="110" r="4.5" />
+        <circle cx="195" cy="110" r="4.5" />
+        <circle cx="320" cy="110" r="4.5" />
+        <circle cx="445" cy="110" r="4.5" />
+        <circle cx="570" cy="110" r="4.5" />
+        <circle cx="70" cy="210" r="4.5" />
+        <circle cx="195" cy="210" r="4.5" />
+        <circle cx="320" cy="210" r="4.5" />
+        <circle cx="445" cy="210" r="4.5" />
+        <circle cx="570" cy="210" r="4.5" />
+      </g>
+
+      <!-- load indicator (diagnose) -->
+      <g class="load">
+        <path class="load-arrow" d="M320 62 V100" marker-end="url(#truss-arrow)" />
+        <text x="320" y="52" text-anchor="middle">LOAD</text>
+      </g>
+
+      <!-- handoff indicator (transfer) -->
+      <g class="handoff">
+        <path class="handoff-arrow" d="M470 258 H600" />
+        <text x="470" y="278">OWNER&rsquo;S TEAM</text>
+      </g>
+
+      <!-- engineering ticks -->
+      <g class="ticks">
+        <path d="M70 96 V124" />
+        <path d="M570 96 V124" />
+        <text x="70" y="88" text-anchor="middle">A</text>
+        <text x="570" y="88" text-anchor="middle">B</text>
+      </g>
+    </svg>
+  </div>
+
+  <div
+    class="cap"
+    id="cap"
+    role="tabpanel"
+    aria-labelledby="t-diagnose"
+    aria-live="polite"
+    tabindex="0"
+  >
+    <h2 id="cap-h">Find where the load is going.</h2>
+    <p id="cap-p">
+      A systems audit maps your intake, follow-up, content, and tools, then shows
+      which parts are carrying more than they can.
+    </p>
+    <p class="get" id="cap-g">You get a written audit and a ranked list of fixes.</p>
+  </div>
+</figure>
+
+<script>
+  type State = "diagnose" | "build" | "transfer";
+
+  const content: Record<State, [string, string, string]> = {
+    diagnose: [
+      "Find where the load is going.",
+      "A systems audit maps your intake, follow-up, content, and tools, then shows which parts are carrying more than they can.",
+      "You get a written audit and a ranked list of fixes.",
+    ],
+    build: [
+      "Replace the weak members.",
+      "We build the strategy, media, and AI-assisted workflows that take over the parts that were failing.",
+      "You get working systems, live.",
+    ],
+    transfer: [
+      "Hand it over.",
+      "We document everything, train your team, and step back so it runs without us.",
+      "You get documentation and a team that owns the system.",
+    ],
+  };
+
+  const svg = document.getElementById("truss") as SVGSVGElement | null;
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>(".tab"));
+  const cap = document.getElementById("cap");
+  const capH = document.getElementById("cap-h");
+  const capP = document.getElementById("cap-p");
+  const capG = document.getElementById("cap-g");
+
+  function setState(state: State, focus = false) {
+    svg?.setAttribute("data-state", state);
+
+    tabs.forEach((tab) => {
+      const selected = tab.dataset.s === state;
+      tab.setAttribute("aria-selected", String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+      if (selected && cap) {
+        cap.setAttribute("aria-labelledby", tab.id);
+        if (focus) tab.focus();
+      }
+    });
+
+    const copy = content[state];
+    if (capH && capP && capG) {
+      capH.textContent = copy[0];
+      capP.textContent = copy[1];
+      capG.textContent = copy[2];
+    }
+  }
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => setState(tab.dataset.s as State, false));
+    tab.addEventListener("keydown", (event) => {
+      const key = (event as KeyboardEvent).key;
+      let next: number | null = null;
+      if (key === "ArrowDown" || key === "ArrowRight")
+        next = (index + 1) % tabs.length;
+      else if (key === "ArrowUp" || key === "ArrowLeft")
+        next = (index + tabs.length - 1) % tabs.length;
+      else if (key === "Home") next = 0;
+      else if (key === "End") next = tabs.length - 1;
+
+      if (next !== null) {
+        event.preventDefault();
+        setState(tabs[next].dataset.s as State, true);
+      }
+    });
+  });
+</script>
+
+<style>
+  .truss-figure {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1.25fr 0.9fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+  }
+
+  .truss-stage {
+    border: var(--border-thick);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    padding: clamp(0.8rem, 2vw, 1.4rem);
+  }
+
+  #truss {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ---- SVG base ---- */
+  #truss .support path {
+    fill: var(--ink);
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+  #truss .support .ground {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 3;
+  }
+  #truss .member path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 4;
+    stroke-linecap: square;
+    transition: stroke 0.4s var(--ease), opacity 0.4s var(--ease),
+      stroke-dasharray 0.4s var(--ease);
+  }
+  #truss .nodes circle {
+    fill: var(--surface);
+    stroke: var(--ink);
+    stroke-width: 3;
+  }
+  #truss .ticks path {
+    stroke: color-mix(in srgb, var(--ink) 45%, transparent);
+    stroke-width: 1.5;
+    stroke-dasharray: 2 4;
+  }
+  #truss .ticks text {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  /* load */
+  #truss .load {
+    transition: opacity 0.4s var(--ease);
+  }
+  #truss .load-arrow {
+    fill: none;
+    stroke: var(--rust);
+    stroke-width: 3;
+  }
+  #truss .load text {
+    fill: var(--rust);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+  }
+
+  /* replacement members */
+  #truss .new path {
+    stroke: var(--amber);
+    opacity: 0;
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+  }
+
+  /* handoff */
+  #truss .handoff {
+    opacity: 0;
+    transition: opacity 0.4s var(--ease);
+  }
+  #truss .handoff-arrow {
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 3;
+  }
+  #truss .handoff text {
+    fill: var(--green);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  /* ---- State: diagnose ---- */
+  #truss[data-state="diagnose"] .weak {
+    stroke: var(--rust);
+    stroke-dasharray: 7 7;
+  }
+  #truss[data-state="diagnose"] .new path {
+    opacity: 0;
+    stroke-dashoffset: 400;
+  }
+
+  /* ---- State: build ---- */
+  #truss[data-state="build"] .weak {
+    opacity: 0.18;
+  }
+  #truss[data-state="build"] .new path {
+    opacity: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.7s var(--ease), opacity 0.3s var(--ease);
+  }
+  #truss[data-state="build"] .load {
+    opacity: 0;
+  }
+
+  /* ---- State: transfer ---- */
+  #truss[data-state="transfer"] .weak {
+    opacity: 0;
+  }
+  #truss[data-state="transfer"] .new path {
+    stroke: var(--ink);
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+  #truss[data-state="transfer"] .load {
+    opacity: 0;
+  }
+  #truss[data-state="transfer"] .handoff {
+    opacity: 1;
+  }
+
+  /* ---- Caption ---- */
+  .cap {
+    border-top: var(--border-thick);
+    padding-top: 1.2rem;
+  }
+
+  .cap h2 {
+    font-size: clamp(1.5rem, 1rem + 2.2vw, 2.4rem);
+    margin-bottom: 0.5rem;
+  }
+
+  .cap p {
+    color: var(--ink-soft);
+    margin-bottom: 0.8rem;
+  }
+
+  .cap .get {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--amber-deep);
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 820px) {
+    .truss-figure {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

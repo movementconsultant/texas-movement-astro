@@ -1,0 +1,337 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import VideoEmbed from "../components/VideoEmbed.astro";
+import ShortsGrid from "../components/ShortsGrid.astro";
+
+const performanceVideos = [
+  { id: "AXGxlbM04i4", title: "Performance Breakdown I" },
+  { id: "1qmvp0VjxbI", title: "Performance Breakdown II" },
+  { id: "ZGEsb4fa3Tg", title: "Performance Breakdown III" },
+];
+
+const performanceShorts = [
+  { id: "vNymMy4ALYg", title: "Performance: Elite Mindset" },
+  { id: "dAWW5s-oEgI", title: "Performance: Daily Execution" },
+  { id: "whLW_R_7lFU", title: "Performance: The Edge" },
+];
+---
+
+<BaseLayout
+  title="Texas Movement Performance | Coached Sprint Development for LA 2028"
+  description="Certified sprint coaching from Texas Movement Performance. USATF Level 1 and NFPT certified, training sprinters for the Los Angeles 2028 Olympic Games."
+>
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow">Texas Movement Performance</p>
+      <h1 class="display page-hero__title">Elite execution, taught.</h1>
+      <p class="page-hero__lede">
+        Sprint mechanics, max velocity development, and the systems that separate
+        the good from the elite — coached with certified methodology.
+      </p>
+    </div>
+  </section>
+
+  <!-- CREDENTIALS & MISSION -->
+  <section class="credentials">
+    <div class="wrap credentials__inner">
+      <p class="eyebrow credentials__eyebrow">Credentials &amp; Mission</p>
+      <h2 class="display credentials__title">Certified coaching, built for the podium.</h2>
+
+      <div class="cred-grid">
+        <article class="cred-card">
+          <span class="cred-card__badge" aria-hidden="true">🛡️</span>
+          <h3 class="cred-card__title">USATF Level 1 Certified Coach</h3>
+          <p class="cred-card__org">USA Track &amp; Field official coaching certification.</p>
+          <p class="cred-card__text">
+            Specialization: sprint mechanics, acceleration, and max velocity
+            development.
+          </p>
+        </article>
+
+        <article class="cred-card">
+          <span class="cred-card__badge" aria-hidden="true">✓</span>
+          <h3 class="cred-card__title">NFPT Certified Personal Trainer</h3>
+          <p class="cred-card__org">National Fitness Professionals Trainer certification.</p>
+          <p class="cred-card__text">
+            Specialization: athletic performance, strength programming, and injury
+            prevention.
+          </p>
+        </article>
+      </div>
+
+      <div class="mission">
+        <h3 class="mission__title">The Mission: LA 2028</h3>
+        <p class="mission__text">
+          Training sprinters for the Los Angeles 2028 Olympic Games. Applying
+          certified methodology to develop athletes capable of competing at the
+          national team level. Every rep, every block start, every max velocity
+          session is built with 2028 in mind.
+        </p>
+        <p class="mission__label">Work With Me</p>
+        <a
+          class="btn btn--emerald"
+          href="mailto:contact@texasmovement.com?subject=LA%202028%20Athlete%20Inquiry"
+        >
+          Athlete Inquiry — Train For LA 2028
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- UDEMY CALLOUT -->
+  <section class="udemy-callout surface section">
+    <div class="wrap">
+      <div class="callout">
+        <div>
+          <h2 class="callout__title">Master the game: Elite Secrets</h2>
+          <p class="callout__text">
+            The full breakdown of the frameworks, habits, and strategies behind
+            Texas Movement, delivered as a course.
+          </p>
+        </div>
+        <a
+          class="btn btn--amber"
+          href="https://www.udemy.com/course/elitesecrets/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Enroll on Udemy &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERFORMANCE VIDEOS -->
+  <section class="videos section">
+    <div class="wrap">
+      <p class="eyebrow">Performance breakdowns</p>
+      <h2 class="display section-title">The work, in motion.</h2>
+      <div class="video-grid">
+        {performanceVideos.map((video) => (
+          <VideoEmbed id={video.id} title={video.title} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SHORTS -->
+  <section class="shorts-section section">
+    <div class="wrap">
+      <ShortsGrid shorts={performanceShorts} heading="Shorts" note="Thirty seconds at a time." />
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="cta surface section">
+    <div class="wrap cta__inner">
+      <p class="eyebrow">Start the process</p>
+      <h2 class="display cta__title">Train with intent. Compete at the next level.</h2>
+      <p class="cta__text">
+        Bring certified sprint methodology to your training. Reach out and tell us
+        where you are and where you want to be.
+      </p>
+      <a
+        class="btn"
+        href="mailto:contact@texasmovement.com?subject=LA%202028%20Athlete%20Inquiry"
+      >
+        Start your athlete inquiry
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---- Page hero ---- */
+  .page-hero {
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+  }
+
+  .page-hero__title {
+    font-size: clamp(2.2rem, 1.3rem + 3.6vw, 3.8rem);
+    margin-bottom: 0.5em;
+  }
+
+  .page-hero__lede {
+    font-size: clamp(1.05rem, 1rem + 0.5vw, 1.3rem);
+    color: var(--ink-soft);
+    max-width: 52ch;
+    margin-bottom: 0;
+  }
+
+  /* ---- Credentials & mission ---- */
+  .credentials {
+    --emerald: #059669;
+    --emerald-deep: #047857;
+    --emerald-tint: #ecfdf5;
+  }
+
+  .credentials__inner {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .credentials__eyebrow {
+    color: var(--emerald-deep);
+  }
+
+  .credentials__title {
+    font-size: clamp(1.8rem, 1.2rem + 2.8vw, 3rem);
+    margin-bottom: clamp(1.6rem, 4vw, 2.6rem);
+  }
+
+  .cred-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(1rem, 2.5vw, 1.8rem);
+  }
+
+  .cred-card {
+    position: relative;
+    padding: clamp(1.4rem, 3vw, 2.2rem);
+    padding-top: clamp(2rem, 4vw, 2.6rem);
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--emerald) 14%, var(--surface)) 0%,
+      color-mix(in srgb, var(--emerald) 5%, var(--surface)) 100%
+    );
+    border: var(--border);
+    border-left: 8px solid var(--emerald);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .cred-card__badge {
+    display: inline-grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+    font-size: 1.35rem;
+    line-height: 1;
+    color: #ffffff;
+    background: var(--emerald);
+    border: 2px solid var(--emerald-deep);
+    border-radius: 50%;
+    box-shadow: 3px 3px 0 var(--emerald-deep);
+  }
+
+  .cred-card__title {
+    font-size: clamp(1.2rem, 1rem + 1vw, 1.5rem);
+    margin-bottom: 0.4rem;
+  }
+
+  .cred-card__org {
+    margin: 0 0 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--emerald-deep);
+  }
+
+  .cred-card__text {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  .mission {
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    padding: clamp(1.8rem, 4vw, 3rem);
+    text-align: center;
+    background: var(--emerald-tint);
+    border: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .mission__title {
+    color: var(--emerald-deep);
+    font-size: clamp(1.6rem, 1.1rem + 2vw, 2.4rem);
+    margin-bottom: 0.6rem;
+  }
+
+  .mission__text {
+    max-width: 62ch;
+    margin: 0 auto 1.6rem;
+    color: var(--ink-soft);
+    font-size: clamp(1.02rem, 1rem + 0.3vw, 1.18rem);
+  }
+
+  .mission__label {
+    margin: 0 0 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--emerald-deep);
+  }
+
+  .btn--emerald {
+    background: var(--emerald);
+    color: #ffffff;
+  }
+
+  .btn--emerald:hover {
+    background: var(--emerald-deep);
+    color: #ffffff;
+  }
+
+  /* ---- Udemy callout ---- */
+  .callout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2.5rem;
+    flex-wrap: wrap;
+    padding: clamp(1.4rem, 4vw, 2.4rem);
+    background: var(--paper);
+    border: var(--border);
+    border-left: 8px solid var(--green);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .callout__title {
+    font-size: clamp(1.4rem, 1rem + 1.8vw, 2rem);
+    margin-bottom: 0.3rem;
+  }
+
+  .callout__text {
+    margin: 0;
+    color: var(--ink-soft);
+    max-width: 46ch;
+  }
+
+  /* ---- Video grid ---- */
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: clamp(1rem, 2.5vw, 1.8rem);
+    margin-top: clamp(1.8rem, 4vw, 3rem);
+  }
+
+  /* ---- Final CTA ---- */
+  .cta__inner {
+    text-align: center;
+  }
+
+  .cta__title {
+    font-size: clamp(1.8rem, 1.2rem + 2.8vw, 3rem);
+    max-width: 24ch;
+    margin-inline: auto;
+  }
+
+  .cta__text {
+    max-width: 56ch;
+    margin: 0 auto 1.6rem;
+    color: var(--ink-soft);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 767px) {
+    .cred-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
