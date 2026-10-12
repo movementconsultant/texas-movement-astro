@@ -1,100 +1,34 @@
+// src/layouts/BaseLayout.astro
 ---
 interface Props {
   title: string;
-  description: string;
+  description?: string;
 }
 
-const {
-  title,
-  description,
-} = Astro.props;
+const { title, description = "Texas Movement International - Consulting, Apparel, Media, and Future Ventures." } = Astro.props;
 
-import "../styles/global.css";
-
-const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
-
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Texas Movement International LLC",
-  url: "https://texasmovement.com/",
-  description,
-  foundingLocation: {
-    "@type": "Place",
-    name: "Chicago, Illinois",
-  },
-  founder: {
-    "@type": "Person",
-    name: "Alexander Mathai",
-    url: "https://alexandermathai.com",
-  },
-  sameAs: ["https://alexandermathai.com", "https://hero.texasmovement.com"],
-};
-
-const nav = [
-  { href: "#work", label: "Consulting" },
-  { href: "#ventures", label: "Websites" },
-  { href: "#media-archive", label: "Media" },
-  { href: "#performance", label: "Performance" },
-  { href: "#readiness", label: "Free checklist" },
-  { href: "#founder", label: "Founder" },
-];
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
 ---
 
-<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#14202B" />
-    <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical.href} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
-      rel="stylesheet"
-    />
-
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical.href} />
-
-    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <title>{title} | Texas Movement International</title>
+    
+    <!-- Official Embed Scripts for IG and TikTok -->
+    <script async src="//www.instagram.com/embed.js"></script>
+    <script async src="https://www.tiktok.com/embed.js"></script>
   </head>
   <body>
-    <a class="skip-link" href="#top">Skip to main content</a>
-
-    <header class="site-header">
-      <div class="wrap bar">
-        <a class="mark" href="#top">Texas Movement</a>
-        <nav aria-label="Primary">
-          {nav.map((item) => <a href={item.href}>{item.label}</a>)}
-          <a class="btn" href="#start">Start a project</a>
-        </nav>
-      </div>
-    </header>
-
-    <main id="top">
+    <Nav />
+    <main>
       <slot />
     </main>
-
-    <footer class="site-footer">
-      <div class="wrap">
-        <p>
-          Texas Movement International LLC<br />
-          <span class="small">Chicago, Illinois</span>
-        </p>
-        <p>
-          <a href="https://alexandermathai.com">Founder site</a><br />
-          <a href="https://hero.texasmovement.com">HERO</a>
-        </p>
-      </div>
-    </footer>
+    <Footer />
   </body>
 </html>
